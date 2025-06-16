@@ -11,11 +11,33 @@ function FlowChart({ event }) {
   const severity = getSeverityKey(selectedEvent.Severity)
   const level = SEVERITY_LEVELS[severity] || {}
   
-  const quickActions = (selectedEvent['Quick Actions'] || '')
-    .split(/\r?\n/)
-    .map(line => line.match(/(\d+)\.\s*(.*)/))
-    .filter(item => item !== null)
-    .map(match => ({ number: match[1], text: match[2].trim() }));
+  const quickActions = (() => {
+    const actionsText = selectedEvent['Quick Actions'] || '';
+    
+    // First try to parse numbered actions (old format)
+    const numberedActions = actionsText
+      .split(/\r?\n/)
+      .map(line => line.match(/(\d+)\.\s*(.*)/))
+      .filter(item => item !== null)
+      .map(match => ({ number: match[1], text: match[2].trim() }));
+    
+    if (numberedActions.length > 0) {
+      return numberedActions;
+    }
+    
+    // If no numbered actions, split by semicolon and create numbered list (new format)
+    const actions = actionsText
+      .split(/;\s*/)
+      .filter(action => action.trim().length > 0)
+      .map((action, index) => ({ 
+        number: (index + 1).toString(), 
+        text: action.trim() 
+      }));
+    
+    return actions;
+  })();
+
+
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">
@@ -38,14 +60,23 @@ function FlowChart({ event }) {
         <div className="lg:col-span-3 space-y-6">
           {/* Immediate Actions - broken out */}
           <div className="space-y-3">
-             {quickActions.map(action => (
-              <NumberedActionCard 
-                key={action.number}
-                number={action.number}
-                text={action.text}
-                severity={severity}
-              />
-            ))}
+            {quickActions.length > 0 ? (
+              quickActions.map(action => (
+                <NumberedActionCard 
+                  key={action.number}
+                  number={action.number}
+                  text={action.text}
+                  severity={severity}
+                />
+              ))
+            ) : (
+              selectedEvent['Quick Actions'] && (
+                <div className="p-4 bg-gray-100 rounded-lg">
+                  <h4 className="font-semibold text-gray-800 mb-2">⚡️ Immediate Actions</h4>
+                  <p className="text-gray-700">{selectedEvent['Quick Actions']}</p>
+                </div>
+              )
+            )}
           </div>
          
           {/* Other actions */}

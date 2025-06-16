@@ -167,4 +167,4 @@ export const ESCALATION_TIMELINES = {
       actions: ['Log event in batch record', 'No immediate action required'],
     }, ],
   },
-} 
+}

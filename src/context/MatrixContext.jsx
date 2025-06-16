@@ -71,6 +71,7 @@ export function MatrixProvider({ children }) {
         'Quick Actions': row['Quick Actions'] || '',
         'Quick Fixes': row['Quick Fixes'] || '',
         'Decision Authority': row['Decision Authority'] || '',
+        'Low Priority Action': row['Low Priority Action'] || '',
         'Response Time (SLA)': row['Response Time (SLA)'] || '',
         'Risk Score': row['Risk Score'] || ''
       }))
@@ -101,6 +102,11 @@ export function MatrixProvider({ children }) {
     localStorage.removeItem(CACHE_CONFIG.CACHE_KEY)
     loadData()
   }
+
+  // Clear cache on component mount to ensure fresh data
+  useEffect(() => {
+    localStorage.removeItem(CACHE_CONFIG.CACHE_KEY)
+  }, [])
 
   const filteredEvents = data.filter(event => {
     const matchesCategory = !selectedCategory || event.Category === selectedCategory

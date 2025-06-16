@@ -6,14 +6,114 @@ export function removeSeverityEmoji(severity) {
   return severity.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]/gu, '').trim()
 }
 
+// Function to categorize events based on keywords
+function categorizeEvent(eventName) {
+  const event = eventName.toLowerCase()
+  
+  // Equipment/Automation
+  if (event.includes('equipment') || event.includes('vision system') || event.includes('metal detector') || 
+      event.includes('torque') || event.includes('weight') || event.includes('calibration')) {
+    return 'Equipment/Automation'
+  }
+  
+  // Facility/Environmental  
+  if (event.includes('humidity') || event.includes('pressure') || event.includes('water leak') || 
+      event.includes('chemical spill') || event.includes('pest') || event.includes('cross-contamination') ||
+      event.includes('reefer')) {
+    return 'Facility/Environmental'
+  }
+  
+  // Documentation
+  if (event.includes('documentation') || event.includes('batch record') || event.includes('training')) {
+    return 'Documentation'
+  }
+  
+  // Systems
+  if (event.includes('it system') || event.includes('serialization') || event.includes('accountability')) {
+    return 'Systems'
+  }
+  
+  // Quality
+  if (event.includes('quarantine') || event.includes('endotoxin') || event.includes('sterility') || 
+      event.includes('microbial') || event.includes('container closure')) {
+    return 'Quality'
+  }
+  
+  // Production
+  if (event.includes('labeling') || event.includes('artwork') || event.includes('line clearance') ||
+      event.includes('damaged')) {
+    return 'Production'
+  }
+  
+  return 'Production'
+}
+
 // Transform Excel data to match expected format
 export function transformExcelData(rawData) {
   return rawData.map(row => {
-    // Remove emojis from severity if present
-    if (row.Severity) {
-      row.Severity = removeSeverityEmoji(row.Severity)
+    // Handle new Discrepancy Guide format
+    const transformedRow = { ...row }
+    
+    // Map new field names to expected format
+    if (row.Event && !row['Event Type']) {
+      transformedRow['Event Type'] = row.Event
+      // Categorize based on event name
+      transformedRow.Category = categorizeEvent(row.Event)
     }
-    return row
+    
+    if (row['Suggested Immediate Actions'] && !row['Quick Actions']) {
+      transformedRow['Quick Actions'] = row['Suggested Immediate Actions']
+    }
+    
+    if (row['Production Resume Criteria'] && !row['Quick Fixes']) {
+      transformedRow['Quick Fixes'] = row['Production Resume Criteria']
+    }
+    
+    // Map SOP/WI to the expected field name
+    if (row['SOP/WI'] && !row['Low Priority Action']) {
+      transformedRow['Low Priority Action'] = row['SOP/WI']
+    }
+    
+    // Handle severity mapping
+    if (row.Severity) {
+      const severity = removeSeverityEmoji(row.Severity)
+      // Map new severity values to old format for consistency
+      const severityMap = {
+        'Critical': 'Red-Critical',
+        'Major': 'Orange-Major', 
+        'Minor': 'Green-Minor',
+        'Moderate': 'Yellow-Moderate'
+      }
+      transformedRow.Severity = severityMap[severity] || severity
+    }
+    
+    // Add default values for missing fields
+    if (!transformedRow['Response Time (SLA)']) {
+      const timeMap = {
+        'Red-Critical': '0-15 minutes',
+        'Orange-Major': '0-2 hours',
+        'Yellow-Moderate': '0-4 hours',
+        'Green-Minor': '0-8 hours'
+      }
+      transformedRow['Response Time (SLA)'] = timeMap[transformedRow.Severity] || '0-4 hours'
+    }
+    
+    if (!transformedRow['Risk Score']) {
+      const riskMap = {
+        'Red-Critical': '9-10',
+        'Orange-Major': '6-8',
+        'Yellow-Moderate': '3-5',
+        'Green-Minor': '1-3'
+      }
+      transformedRow['Risk Score'] = riskMap[transformedRow.Severity] || '3-5'
+    }
+    
+    // Create a unique key if missing
+    if (!transformedRow.Key) {
+      transformedRow.Key = `${transformedRow.Category || 'General'}|${transformedRow['Event Type'] || transformedRow.Event}`
+    }
+    
+    return transformedRow
   })
 }
 

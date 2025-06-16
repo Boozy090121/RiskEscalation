@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useMatrix } from '../context/MatrixContext'
 import { SEVERITY_LEVELS } from '../constants'
 
@@ -12,13 +12,7 @@ function EventList() {
     selectedEvent,
   } = useMatrix()
   
-  const [isCollapsed, setIsCollapsed] = useState(false)
 
-  useEffect(() => {
-    if (selectedEvent) {
-      setIsCollapsed(true)
-    }
-  }, [selectedEvent])
 
   const getSeverityColor = (severity) => {
     return SEVERITY_LEVELS[severity]?.color || '#ccc';
@@ -69,30 +63,16 @@ function EventList() {
 
   return (
     <div className="bg-[#f8f9fa] rounded-lg shadow-inner">
-      <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-        <div >
-          <h3 className="text-lg font-semibold text-gray-700">
-            {selectedCategory ? `${selectedCategory} Events` : 'All Events'}
-          </h3>
-          <p className="text-xs text-gray-500">
-            Found {filteredEvents.length} of {events.length} events
-          </p>
-        </div>
-        {isCollapsed && (
-           <button 
-            onClick={() => setIsCollapsed(false)}
-            className="px-3 py-1 text-xs font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-           >
-            Show All
-           </button>
-        )}
+      <div className="p-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-700">
+          {selectedCategory ? `${selectedCategory} Events` : 'All Events'}
+        </h3>
+        <p className="text-xs text-gray-500">
+          Found {filteredEvents.length} of {events.length} events
+        </p>
       </div>
       <div className="overflow-y-auto max-h-[calc(100vh-320px)]">
-        {isCollapsed && selectedEvent ? (
-          <ul>
-            {renderListItem(selectedEvent)}
-          </ul>
-        ) : filteredEvents.length > 0 ? (
+        {filteredEvents.length > 0 ? (
           <ul className="divide-y divide-gray-200">
             {filteredEvents.map(event => renderListItem(event))}
           </ul>

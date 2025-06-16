@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "convert-excel": "node scripts/excelToJson.js"
+    "convert-excel": "node scripts/excelToJson.js",
+    "watch-excel": "node scripts/watchExcel.js",
+    "dev-with-watch": "concurrently \"npm run watch-excel\" \"npm run dev\"",
+    "update-data": "npm run convert-excel && echo 'Data updated successfully!'",
+    "deploy": "node scripts/deploy.js"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -20,6 +24,7 @@
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.17",
+    "concurrently": "^8.2.2",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "vite": "^5.1.0",

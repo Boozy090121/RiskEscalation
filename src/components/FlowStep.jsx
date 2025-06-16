@@ -25,7 +25,7 @@ function FlowStep({ field, value, severity }) {
         <h4 className="text-lg font-bold">{field.label}</h4>
       </div>
       <div className={bodyClasses}>
-        {value || 'N/A'}
+        {value && value.trim() !== '' && value.trim() !== 'TBD' ? value : 'N/A'}
       </div>
     </div>
   )
