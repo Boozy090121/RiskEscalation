@@ -7,37 +7,37 @@ function EscalationTimeline({ severity }) {
 
   if (!timeline) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-        <h3 className="text-lg font-medium text-gray-700">
-          No escalation timeline defined for this severity level.
+      <div className="bg-white rounded-lg shadow-md p-6 h-full flex items-center justify-center">
+        <h3 className="text-lg font-medium text-gray-500 text-center">
+          No escalation timeline defined.
         </h3>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-3xl font-extrabold mb-2" style={{ color: level.color }}>
+    <div className="bg-white rounded-lg shadow-md p-4 h-full">
+      <h3 className="text-xl font-bold mb-1" style={{ color: level.color }}>
         {timeline.title}
       </h3>
-      <p className="text-lg text-gray-600 mb-6">
+      <p className="text-sm text-gray-600 mb-4">
         Follow these phases to manage the event effectively.
       </p>
 
-      <div className="relative border-l-4 ml-6" style={{ borderColor: level.color }}>
+      <div className="relative border-l-2 ml-4" style={{ borderColor: level.color }}>
         {timeline.phases?.map((phase, index) => (
-          <div key={index} className="mb-6 ml-12">
+          <div key={index} className="mb-3 ml-8">
             <div
-              className="absolute -left-6 flex items-center justify-center w-12 h-12 rounded-full ring-8 ring-white"
+              className="absolute -left-4 flex items-center justify-center w-8 h-8 rounded-full ring-4 ring-white"
               style={{ backgroundColor: level.color }}
             >
-              <span className="text-white font-bold text-xl">{index + 1}</span>
+              <span className="text-white font-bold text-base">{index + 1}</span>
             </div>
-            <span className={`text-sm font-bold px-3 py-1 rounded-full ${level.bgColor} ${level.textColor}`}>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${level.bgColor} ${level.textColor}`}>
               {phase.duration}
             </span>
-            <h4 className="text-2xl font-bold text-gray-900 mt-2 mb-1">{phase.name}</h4>
-            <ul className="space-y-1 text-gray-700 text-lg list-disc list-inside">
+            <h4 className="text-lg font-bold text-gray-900 mt-1.5 mb-1">{phase.name}</h4>
+            <ul className="space-y-0.5 text-gray-700 text-sm list-disc list-inside">
               {phase.actions.map((action, i) => (
                 <li key={i} className="font-medium">{action}</li>
               ))}

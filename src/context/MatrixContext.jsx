@@ -122,7 +122,8 @@ export function MatrixProvider({ children }) {
     searchTerm,
     setSearchTerm,
     filteredEvents,
-    refreshData
+    refreshData,
+    getSeverityKey
   }
 
   return (

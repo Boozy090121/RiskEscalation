@@ -1,3 +1,9 @@
+import {
+  WrenchScrewdriverIcon,
+  UserGroupIcon,
+  DocumentTextIcon,
+} from '@heroicons/react/24/solid'
+
 export const GRAPH_CONFIG = {
   EXCEL_PATH: 'https://pclservices-my.sharepoint.com/:x:/g/personal/kyle_prima_pci_com/EdXBMvqoRUZCk_bKBhTlHQwBsl7LNuboiCG7ZvfDp8Fr-A?e=4SRYPZ',
   TABLE_NAME: 'RiskMatrix'
@@ -74,19 +80,19 @@ export const FIELD_MAPPINGS = [
   {
     key: 'Quick Fixes',
     label: 'Production Resume Criteria',
-    icon: '🛠️',
+    icon: WrenchScrewdriverIcon,
     priority: 'medium'
   },
   {
     key: 'Decision Authority',
     label: 'Decision Authority',
-    icon: '👤',
+    icon: UserGroupIcon,
     priority: 'high'
   },
   {
     key: 'Low Priority Action',
     label: 'SOP/WI',
-    icon: '📄',
+    icon: DocumentTextIcon,
     priority: 'low'
   }
 ]

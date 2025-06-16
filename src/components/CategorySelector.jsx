@@ -16,17 +16,17 @@ function CategorySelector() {
 
   return (
     <div className="p-2">
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         {categories.map(category => {
           const isActive = selectedCategory === category || (selectedCategory === '' && category === 'All');
           return (
             <button
               key={category}
               onClick={() => setSelectedCategory(category === 'All' ? '' : category)}
-              className={`px-5 py-3 text-base font-bold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                 isActive
-                  ? 'bg-blue-700 text-white shadow-lg transform scale-105'
-                  : 'bg-white text-gray-700 hover:bg-blue-100 hover:text-blue-800 shadow-sm border border-gray-200'
+                  ? 'bg-blue-700 text-white shadow-md'
+                  : 'bg-white text-gray-600 hover:bg-blue-50 hover:text-blue-700 shadow-sm border border-gray-200'
               }`}
             >
               {category}

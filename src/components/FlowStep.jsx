@@ -3,11 +3,13 @@ import { SEVERITY_LEVELS } from '../constants'
 
 function FlowStep({ field, value, severity }) {
   const level = SEVERITY_LEVELS[severity] || {}
-  const isImmediateAction = field.key === 'Quick Actions';
+  const Icon = field.icon
 
-  const cardClasses = `rounded-lg shadow-md border-t-8 ${isImmediateAction ? level.bgColor + ' ' + level.textColor : 'bg-white'}`
-  const headerClasses = `p-4 flex items-center gap-4 text-2xl font-bold ${isImmediateAction ? '' : level.textColor}`
-  const bodyClasses = `p-6 text-lg whitespace-pre-line ${isImmediateAction ? 'text-white' : 'text-gray-800'}`
+  const cardClasses = `bg-white rounded-lg shadow-md border-t-4`
+  const headerClasses = `p-3 flex items-center gap-3`
+  const bodyClasses = `p-3 text-gray-700 whitespace-pre-line ${
+    field.key === 'Decision Authority' ? 'text-base font-semibold' : 'text-sm'
+  }`
 
   return (
     <div
@@ -16,10 +18,10 @@ function FlowStep({ field, value, severity }) {
     >
       <div
         className={headerClasses}
-        style={!isImmediateAction ? { color: level.color } : {}}
+        style={{ color: level.color }}
       >
-        <span className="text-3xl">{field.icon}</span>
-        <h4 className="text-2xl font-bold">{field.label}</h4>
+        {Icon && <Icon className="w-8 h-8 flex-shrink-0" />}
+        <h4 className="text-lg font-bold">{field.label}</h4>
       </div>
       <div className={bodyClasses}>
         {value || 'N/A'}
