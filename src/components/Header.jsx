@@ -8,22 +8,36 @@ function Header() {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-20 border-b-4 border-blue-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-2">
+        <div className="flex justify-between items-center py-3">
           {/* Left side: Logo and Title */}
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="PCI Pharma Services Logo" className="h-10" />
+          <div className="flex items-center gap-4">
+            <img src="/logo.png" alt="PCI Pharma Services Logo" className="h-12 flex-shrink-0" />
             <div>
-              <h1 className="text-xl md:text-2xl font-extrabold text-gray-800 tracking-tight">
+              <h1 className="text-2xl font-extrabold text-gray-800 tracking-tight">
                 Risk Escalation Guide
               </h1>
-              <p className="text-xs text-gray-500">PCI Pharma Services | For reference only</p>
+              <p className="text-sm text-gray-500">PCI Pharma Services | For reference only</p>
             </div>
           </div>
 
-          {/* Right side: Search and Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+          {/* Right side group */}
+          <div className="flex items-center gap-6">
+            {/* Severity Legend */}
+            <div className="hidden lg:flex flex-wrap items-center justify-center gap-x-4 text-sm" aria-label="Severity level legend">
+              {Object.values(SEVERITY_LEVELS).map((level) => (
+                <div key={level.label} className="flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full border border-gray-300"
+                    style={{ backgroundColor: level.color }}
+                    aria-hidden="true"
+                  />
+                  <span className="font-semibold text-gray-600 whitespace-nowrap">{level.label}</span>
+                </div>
+              ))}
+            </div>
+
             {/* Search Bar */}
-            <div className="relative w-56 md:w-72">
+            <div className="relative w-64">
               <input
                 type="text"
                 placeholder="Search events..."
@@ -39,20 +53,6 @@ function Header() {
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Severity Legend */}
-        <div className="pb-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-1 text-xs" aria-label="Severity level legend">
-          {Object.values(SEVERITY_LEVELS).map((level) => (
-            <div key={level.label} className="flex items-center gap-2">
-              <div 
-                className="w-3 h-3 rounded-full border border-gray-200"
-                style={{ backgroundColor: level.color }}
-                aria-hidden="true"
-              />
-              <span className="font-semibold text-gray-600">{level.label}</span>
-            </div>
-          ))}
         </div>
       </div>
     </header>
