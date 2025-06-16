@@ -86,25 +86,16 @@ function FlowChart() {
           </div>
         </div>
 
-        {/* Severity Badge - Enhanced */}
+        {/* Severity Badge */}
         <div className="bg-gray-50 rounded-lg p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 font-medium">SEVERITY:</span>
-              <span 
-                className="px-6 py-3 rounded-full font-bold text-white text-lg shadow-lg"
-                style={{ backgroundColor: COLORS.SEVERITY[severity] }}
-              >
-                {severity}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 bg-white rounded-lg px-4 py-3 shadow">
-              <span className="text-2xl">⏱️</span>
-              <div>
-                <span className="text-xs text-gray-600 block">RESPONSE TIME</span>
-                <span className="font-bold text-lg">{selectedEvent['Response Time (SLA)']}</span>
-              </div>
-            </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600 font-medium">SEVERITY:</span>
+            <span 
+              className="px-6 py-3 rounded-full font-bold text-white text-lg shadow-lg"
+              style={{ backgroundColor: COLORS.SEVERITY[severity] }}
+            >
+              {severity}
+            </span>
           </div>
         </div>
       </div>
@@ -125,28 +116,23 @@ function FlowChart() {
               </h3>
             </div>
             
-            {/* Priority fields first */}
-            {FIELD_MAPPINGS
-              .sort((a, b) => {
-                const priorityOrder = { high: 0, medium: 1, low: 2 }
-                return priorityOrder[a.priority] - priorityOrder[b.priority]
-              })
-              .map((field, index) => (
-                <FlowStep
-                  key={field.key}
-                  field={field}
-                  value={selectedEvent[field.key]}
-                  severity={severity}
-                  index={index}
-                  isMobile={true}
-                  isLarge={field.priority === 'high'}
-                />
-              ))}
+            {/* Priority fields */}
+            {FIELD_MAPPINGS.map((field, index) => (
+              <FlowStep
+                key={field.key}
+                field={field}
+                value={selectedEvent[field.key]}
+                severity={severity}
+                index={index}
+                isMobile={true}
+                isLarge={true}
+              />
+            ))}
           </div>
 
-          {/* Desktop/Tablet view - Priority-based Grid layout */}
+          {/* Desktop/Tablet view - Grid layout */}
           <div className="hidden md:block space-y-6">
-            {/* Top Priority - Event Summary */}
+            {/* Event Summary */}
             <div className="bg-gray-50 rounded-lg p-6">
               <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-3">
                 <span 
@@ -156,56 +142,20 @@ function FlowChart() {
                 {selectedEvent['Event Type']}
               </h3>
               
-              {/* Critical Actions Row */}
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
-                {/* Immediate Actions - Largest */}
-                <div>
-                  <FlowStep
-                    field={FIELD_MAPPINGS[0]}
-                    value={selectedEvent[FIELD_MAPPINGS[0].key]}
-                    severity={severity}
-                    index={0}
-                    isMobile={false}
-                    isLarge={true}
-                  />
-                </div>
-                
-                {/* Contact Person */}
-                <div>
-                  <FlowStep
-                    field={FIELD_MAPPINGS[2]}
-                    value={selectedEvent[FIELD_MAPPINGS[2].key]}
-                    severity={severity}
-                    index={2}
-                    isMobile={false}
-                    isLarge={true}
-                  />
-                </div>
-              </div>
-              
-              {/* Secondary Information Row */}
+              {/* Main Information Grid */}
               <div className="grid md:grid-cols-2 gap-6">
-                {/* Quick Fixes */}
-                <div>
-                  <FlowStep
-                    field={FIELD_MAPPINGS[1]}
-                    value={selectedEvent[FIELD_MAPPINGS[1].key]}
-                    severity={severity}
-                    index={1}
-                    isMobile={false}
-                  />
-                </div>
-                
-                {/* Risk Score */}
-                <div>
-                  <FlowStep
-                    field={FIELD_MAPPINGS[3]}
-                    value={selectedEvent[FIELD_MAPPINGS[3].key]}
-                    severity={severity}
-                    index={3}
-                    isMobile={false}
-                  />
-                </div>
+                {FIELD_MAPPINGS.map((field, index) => (
+                  <div key={field.key}>
+                    <FlowStep
+                      field={field}
+                      value={selectedEvent[field.key]}
+                      severity={severity}
+                      index={index}
+                      isMobile={false}
+                      isLarge={true}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -220,21 +170,16 @@ function FlowChart() {
           <span className="text-2xl animate-pulse">🚨</span>
           EMERGENCY CONTACTS
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white rounded-lg p-3 text-center">
-            <div className="text-3xl mb-1">🏥</div>
-            <span className="font-medium text-red-800 text-sm">QA Emergency</span>
+            <div className="text-3xl mb-1">📞</div>
+            <span className="font-medium text-red-800 text-sm">Primary Contact</span>
             <p className="text-red-700 font-bold text-xl">x2222</p>
           </div>
           <div className="bg-white rounded-lg p-3 text-center">
-            <div className="text-3xl mb-1">🔧</div>
-            <span className="font-medium text-red-800 text-sm">Maintenance</span>
+            <div className="text-3xl mb-1">📱</div>
+            <span className="font-medium text-red-800 text-sm">Secondary Contact</span>
             <p className="text-red-700 font-bold text-xl">x3333</p>
-          </div>
-          <div className="bg-white rounded-lg p-3 text-center">
-            <div className="text-3xl mb-1">👔</div>
-            <span className="font-medium text-red-800 text-sm">Site Director</span>
-            <p className="text-red-700 font-bold text-xl">x4444</p>
           </div>
         </div>
       </div>
