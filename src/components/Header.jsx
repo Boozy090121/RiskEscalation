@@ -11,11 +11,7 @@ function Header() {
         <div className="flex justify-between items-center py-4">
           {/* Left side: Logo and Title */}
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-blue-800 rounded-full flex items-center justify-center">
-               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+            <img src="/logo.png" alt="PCI Pharma Services Logo" className="h-16" />
             <div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight">
                 Risk Escalation Guide
