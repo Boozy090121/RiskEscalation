@@ -1,101 +1,108 @@
 import React from 'react'
 import { useMatrix } from '../context/MatrixContext'
-import { COLORS, FIELD_MAPPINGS, EMERGENCY_CONTACTS } from '../constants'
+import { SEVERITY_LEVELS } from '../constants'
 
-export default function EventList() {
-  const { 
-    filteredEvents, 
-    selectedEvent, 
-    setSelectedEvent,
+function EventList() {
+  const {
+    events = [],
+    loading,
+    selectedCategory,
     searchTerm,
-    setSearchTerm
+    filteredEvents = [],
+    setSelectedEvent,
+    selectedEvent,
   } = useMatrix()
 
   const getSeverityColor = (severity) => {
-    return COLORS.SEVERITY[severity] || COLORS.SEVERITY['🟢 Green-Minor']
+    return SEVERITY_LEVELS[severity]?.color || '#ccc';
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-6">
+        <div className="animate-pulse">
+          <div className="h-10 bg-gray-200 rounded w-2/3 mb-6"></div>
+          <div className="space-y-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-16 bg-gray-200 rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Search Bar */}
-      <div className="p-4 border-b">
-        <input
-          type="text"
-          placeholder="Search events..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+    <div className="bg-white rounded-xl shadow-md">
+      <div className="p-6 border-b border-gray-200">
+        <h3 className="text-2xl font-bold text-gray-800">
+          {selectedCategory ? `${selectedCategory} Events` : 'All Events'}
+        </h3>
+        <p className="text-base text-gray-500 mt-1">
+          Found {filteredEvents.length} of {events.length} events
+        </p>
       </div>
-
-      {/* Event List */}
-      <div className="flex-1 overflow-y-auto">
-        {filteredEvents.map((event) => (
-          <div
-            key={event.Key}
-            onClick={() => setSelectedEvent(event)}
-            className={`p-4 border-b cursor-pointer hover:bg-gray-50 ${
-              selectedEvent?.Key === event.Key ? 'bg-blue-50' : ''
-            }`}
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-lg">{event.Severity}</span>
-              <h3 className="font-semibold">{event['Event Type']}</h3>
+      <div className="overflow-y-auto max-h-[calc(100vh-320px)]">
+        {filteredEvents.length > 0 ? (
+          <ul className="divide-y divide-gray-100">
+            {filteredEvents.map(event => (
+              <li
+                key={event.Key}
+                onClick={() => setSelectedEvent(event)}
+                className={`p-5 cursor-pointer transition-all duration-200 ease-in-out border-l-8 ${
+                  selectedEvent?.Key === event.Key
+                    ? 'bg-blue-100 border-blue-600'
+                    : 'border-transparent hover:bg-gray-50 hover:border-blue-300'
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div
+                    className="w-4 h-4 rounded-full flex-shrink-0"
+                    style={{
+                      backgroundColor: getSeverityColor(event.Severity),
+                    }}
+                  ></div>
+                  <div className="flex-grow">
+                    <p className="font-bold text-lg text-gray-900">
+                      {event['Event Type']}
+                    </p>
+                    <p className="text-base text-gray-600">{event.Category}</p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <svg
+                      className="w-6 h-6 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="p-10 text-center">
+            <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-5 flex items-center justify-center">
+              <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-            <p className="text-sm text-gray-600 mt-1">{event.Category}</p>
+            <p className="font-bold text-xl text-gray-700">No events found</p>
+            <p className="text-base text-gray-500 mt-2">
+              Try adjusting your search or filter.
+            </p>
           </div>
-        ))}
+        )}
       </div>
-
-      {/* Selected Event Details */}
-      {selectedEvent && (
-        <div className="border-t p-4 bg-white">
-          <div className="space-y-4">
-            {/* Main Information */}
-            <div>
-              <h2 className="text-xl font-bold mb-2">{selectedEvent['Event Type']}</h2>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{selectedEvent.Severity}</span>
-                <span className="text-gray-600">{selectedEvent.Category}</span>
-              </div>
-            </div>
-
-            {/* Key Information */}
-            <div className="space-y-3">
-              {FIELD_MAPPINGS.map(({ key, label, icon }) => (
-                <div key={key} className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span>{icon}</span>
-                    <h3 className="font-semibold">{label}</h3>
-                  </div>
-                  <p className="text-gray-700 whitespace-pre-line">{selectedEvent[key]}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Emergency Contacts */}
-            <div className="mt-6">
-              <h3 className="font-semibold mb-3">Emergency Contacts</h3>
-              <div className="space-y-3">
-                <div className="bg-red-50 p-3 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span>{EMERGENCY_CONTACTS.primary.icon}</span>
-                    <h4 className="font-semibold">{EMERGENCY_CONTACTS.primary.name}</h4>
-                  </div>
-                  <p className="text-gray-700">Contact information to be added</p>
-                </div>
-                <div className="bg-red-50 p-3 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span>{EMERGENCY_CONTACTS.secondary.icon}</span>
-                    <h4 className="font-semibold">{EMERGENCY_CONTACTS.secondary.name}</h4>
-                  </div>
-                  <p className="text-gray-700">Contact information to be added</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
+
+export default EventList

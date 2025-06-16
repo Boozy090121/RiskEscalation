@@ -1,42 +1,47 @@
 import React from 'react'
-import { COLORS, ESCALATION_TIMELINES } from '../constants'
+import { ESCALATION_TIMELINES, SEVERITY_LEVELS } from '../constants'
 
 function EscalationTimeline({ severity }) {
-  const timeline = ESCALATION_TIMELINES[severity]?.steps || ESCALATION_TIMELINES['Green-Minor'].steps
-  
+  const timeline = ESCALATION_TIMELINES[severity]
+  const level = SEVERITY_LEVELS[severity] || {}
+
+  if (!timeline) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+        <h3 className="text-lg font-medium text-gray-700">
+          No escalation timeline defined for this severity level.
+        </h3>
+      </div>
+    )
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Escalation Timeline
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h3 className="text-3xl font-extrabold mb-2" style={{ color: level.color }}>
+        {timeline.title}
       </h3>
-      
-      <div className="space-y-6">
-        {timeline.map((step, index) => (
-          <div key={index} className="relative">
-            <div className="flex items-start gap-4">
-              {/* Timeline indicator */}
-              <div className="flex flex-col items-center">
-                <div 
-                  className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold shadow-lg"
-                  style={{ 
-                    backgroundColor: COLORS.SEVERITY[severity],
-                    fontSize: '12px'
-                  }}
-                >
-                  {step.time}
-                </div>
-                {index < timeline.length - 1 && (
-                  <div className="w-1 h-16 bg-gray-300 mt-2"></div>
-                )}
-              </div>
-              
-              {/* Step content */}
-              <div className="flex-1">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-gray-700">{step.action}</p>
-                </div>
-              </div>
+      <p className="text-lg text-gray-600 mb-6">
+        Follow these phases to manage the event effectively.
+      </p>
+
+      <div className="relative border-l-4 ml-6" style={{ borderColor: level.color }}>
+        {timeline.phases?.map((phase, index) => (
+          <div key={index} className="mb-6 ml-12">
+            <div
+              className="absolute -left-6 flex items-center justify-center w-12 h-12 rounded-full ring-8 ring-white"
+              style={{ backgroundColor: level.color }}
+            >
+              <span className="text-white font-bold text-xl">{index + 1}</span>
             </div>
+            <span className={`text-sm font-bold px-3 py-1 rounded-full ${level.bgColor} ${level.textColor}`}>
+              {phase.duration}
+            </span>
+            <h4 className="text-2xl font-bold text-gray-900 mt-2 mb-1">{phase.name}</h4>
+            <ul className="space-y-1 text-gray-700 text-lg list-disc list-inside">
+              {phase.actions.map((action, i) => (
+                <li key={i} className="font-medium">{action}</li>
+              ))}
+            </ul>
           </div>
         ))}
       </div>

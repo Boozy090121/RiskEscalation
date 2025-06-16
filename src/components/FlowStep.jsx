@@ -1,50 +1,28 @@
 import React from 'react'
-import { COLORS } from '../constants'
+import { SEVERITY_LEVELS } from '../constants'
 
-function FlowStep({ field, value, severity, index }) {
-  const bgColor = COLORS.SEVERITY[severity] || COLORS.SEVERITY['Green-Minor']
-  const isPriority = field.priority === 'high'
-  
-  const formatValue = (fieldKey, val) => {
-    if (!val) return 'N/A'
-    
-    if (fieldKey === 'Quick Actions' && val.includes('\n')) {
-      return val.split('\n').map((line, i) => (
-        <div key={i} className={`mb-2 ${isPriority ? 'font-semibold' : ''}`}>
-          • {line.replace(/^\d+\.\s*/, '')}
-        </div>
-      ))
-    }
-    
-    if (fieldKey === 'Decision Authority') {
-      return <div className="text-lg font-bold">{val}</div>
-    }
-    
-    return val
-  }
+function FlowStep({ field, value, severity }) {
+  const level = SEVERITY_LEVELS[severity] || {}
+  const isImmediateAction = field.key === 'Quick Actions';
+
+  const cardClasses = `rounded-lg shadow-md border-t-8 ${isImmediateAction ? level.bgColor + ' ' + level.textColor : 'bg-white'}`
+  const headerClasses = `p-4 flex items-center gap-4 text-2xl font-bold ${isImmediateAction ? '' : level.textColor}`
+  const bodyClasses = `p-6 text-lg whitespace-pre-line ${isImmediateAction ? 'text-white' : 'text-gray-800'}`
 
   return (
-    <div 
-      className={`bg-white rounded-lg shadow-sm border-2 transform transition-transform hover:scale-105 ${
-        isPriority ? 'ring-2 ring-offset-2' : ''
-      }`}
-      style={{ 
-        borderColor: bgColor,
-        ringColor: isPriority ? bgColor : 'transparent'
-      }}
+    <div
+      className={cardClasses}
+      style={{ borderColor: level.color }}
     >
-      <div 
-        className="px-4 py-3 text-white font-bold flex items-center gap-2"
-        style={{ backgroundColor: bgColor }}
+      <div
+        className={headerClasses}
+        style={!isImmediateAction ? { color: level.color } : {}}
       >
-        <span className="text-xl">{field.icon}</span>
-        <span className="text-base">{field.label}</span>
+        <span className="text-3xl">{field.icon}</span>
+        <h4 className="text-2xl font-bold">{field.label}</h4>
       </div>
-      
-      <div className="p-4">
-        <div className="text-gray-900 text-base leading-relaxed">
-          {formatValue(field.key, value)}
-        </div>
+      <div className={bodyClasses}>
+        {value || 'N/A'}
       </div>
     </div>
   )

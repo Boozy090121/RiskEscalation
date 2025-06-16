@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { CACHE_CONFIG } from '../constants'
+import { CACHE_CONFIG, COLORS } from '../constants'
 import excelService from '../services/excelService'
 
 const MatrixContext = createContext()
@@ -12,6 +12,15 @@ export function useMatrix() {
   return context
 }
 
+// Helper function to find the correct severity key
+const getSeverityKey = (severityString) => {
+  if (!severityString) return 'Green-Minor';
+  const validKeys = Object.keys(COLORS.SEVERITY);
+  // Find a key that is included in the severityString, e.g., "Red-Critical" in "🔴 Red-Critical"
+  const key = validKeys.find(k => severityString.includes(k));
+  return key || 'Green-Minor';
+};
+
 export function MatrixProvider({ children }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -21,7 +30,6 @@ export function MatrixProvider({ children }) {
   })
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
-  const [viewMode, setViewMode] = useState('details')
 
   useEffect(() => {
     loadData()
@@ -59,7 +67,7 @@ export function MatrixProvider({ children }) {
         Key: row.Key || '',
         Category: row.Category || '',
         'Event Type': row['Event Type'] || '',
-        Severity: row.Severity || '🟢 Green-Minor',
+        Severity: getSeverityKey(row.Severity),
         'Quick Actions': row['Quick Actions'] || '',
         'Quick Fixes': row['Quick Fixes'] || '',
         'Decision Authority': row['Decision Authority'] || '',
@@ -104,7 +112,7 @@ export function MatrixProvider({ children }) {
   })
 
   const value = {
-    data,
+    events: data,
     loading,
     error,
     selectedCategory,
@@ -113,8 +121,6 @@ export function MatrixProvider({ children }) {
     setSelectedEvent,
     searchTerm,
     setSearchTerm,
-    viewMode,
-    setViewMode,
     filteredEvents,
     refreshData
   }

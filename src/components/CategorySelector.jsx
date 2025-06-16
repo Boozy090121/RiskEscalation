@@ -2,31 +2,37 @@ import React from 'react'
 import { useMatrix } from '../context/MatrixContext'
 
 function CategorySelector() {
-  const { data, selectedCategory, setSelectedCategory, loading } = useMatrix()
+  const { events = [], selectedCategory, setSelectedCategory, loading } = useMatrix()
 
-  if (loading) return null
+  const categories = loading ? [] : ['All', ...new Set(events.map(event => event.Category))]
 
-  const categories = [...new Set(data.map(item => item.Category))]
+  if (loading && categories.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm p-4 animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-full"></div>
+      </div>
+    )
+  }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
-      <h2 className="text-lg font-semibold text-gray-900 mb-3">
-        Categories
-      </h2>
-      <div className="space-y-2">
-        {categories.map(category => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
-              selectedCategory === category
-                ? 'bg-blue-50 text-blue-700 font-medium'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            {category}
-          </button>
-        ))}
+    <div className="p-2">
+      <div className="flex flex-wrap items-center gap-3">
+        {categories.map(category => {
+          const isActive = selectedCategory === category || (selectedCategory === '' && category === 'All');
+          return (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category === 'All' ? '' : category)}
+              className={`px-5 py-3 text-base font-bold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                isActive
+                  ? 'bg-blue-700 text-white shadow-lg transform scale-105'
+                  : 'bg-white text-gray-700 hover:bg-blue-100 hover:text-blue-800 shadow-sm border border-gray-200'
+              }`}
+            >
+              {category}
+            </button>
+          )
+        })}
       </div>
     </div>
   )
