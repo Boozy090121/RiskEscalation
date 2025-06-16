@@ -8,7 +8,8 @@ function FlowStep({ field, value, severity }) {
   const cardClasses = `bg-white rounded-lg shadow-md border-t-4`
   const headerClasses = `p-3 flex items-center gap-3`
   const bodyClasses = `p-3 text-gray-700 whitespace-pre-line ${
-    field.key === 'Decision Authority' ? 'text-base font-semibold' : 'text-sm'
+    field.key === 'Decision Authority' ? 'text-base font-semibold' : 
+    field.key === 'Quick Fixes' ? 'text-sm font-medium' : 'text-sm'
   }`
 
   return (
